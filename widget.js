@@ -5,7 +5,7 @@
 // -----------------------------------------------
 // 1. Configuration - REPLACE THIS VALUE
 // -----------------------------------------------
-const SUPABASE_URL = 'https://<YOUR-PROJECT-REF>.supabase.co/rest/v1/rpc/'; 
+const SUPABASE_URL = 'https://lxtaitbzpvdzyonxhfmm.supabase.co/rest/v1/rpc/'; 
 const WIDGET_ID = 'tarmacq-verify-widget-container';
 const PLACEHOLDER_ID = 'captcha-placeholder'; 
 
@@ -26,7 +26,7 @@ window.TarmacqVerify = {
     const customerSiteKey = currentScript ? currentScript.getAttribute('data-secret') : null;
 
     if (!customerSiteKey) {
-        console.error('Tarmacq Verify Error: data-secret attribute is missing. Widget disabled.');
+        console.error('tarmacq Verify Error: data-secret attribute is missing. Widget disabled.');
         return;
     }
     window.TarmacqVerify.siteKey = customerSiteKey;
@@ -37,7 +37,7 @@ window.TarmacqVerify = {
     // 3. Inject the basic widget HTML into the placeholder
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     if (!placeholder) {
-        console.error(`Tarmacq Verify Error: Placeholder div #${PLACEHOLDER_ID} not found.`);
+        console.error(`tarmacq Verify Error: Placeholder div #${PLACEHOLDER_ID} not found.`);
         return;
     }
 
@@ -187,7 +187,7 @@ async function submitUserAnswer(modal) {
         }
         
     } catch (error) {
-        console.error('Tarmacq Verify Verification Error:', error);
+        console.error('tarmacq Verify Verification Error:', error);
         showErrorState();
     } finally {
         modal.close();
