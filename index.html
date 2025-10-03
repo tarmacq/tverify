@@ -3,92 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tarmacq Verify – Get Your CAPTCHA Keys</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f8fafc;
-      color: #1e293b;
-      line-height: 1.6;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-    h1 {
-      font-size: 2.25rem;
-      color: #0f172a;
-      margin-bottom: 0.5rem;
-    }
-    .subtitle {
-      color: #64748b;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .btn {
-      background: #3b82f6;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-    .btn:hover { background: #2563eb; }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #cbd5e1;
-      color: #475569;
-    }
-    .btn-outline:hover { background: #f1f5f9; }
-    input, button {
-      width: 100%;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      padding: 0.75rem;
-      font-size: 1rem;
-    }
-    input { border: 1px solid #e2e8f0; border-radius: 8px; }
-    .key-box {
-      background: #f1f5f9;
-      padding: 1rem;
-      border-radius: 8px;
-      font-family: monospace;
-      word-break: break-all;
-      margin: 0.5rem 0;
-    }
-    .hidden { display: none; }
-    .user-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    pre {
-      background: #f8fafc;
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-  </style>
+  <title>tarmacq Verify – Get Your CAPTCHA Keys</title>
+  <!-- You will link your CSS here -->
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Tarmacq Verify</h1>
+      <h1>tarmacq Verify</h1>
       <p class="subtitle">Secure your forms with our privacy-first CAPTCHA</p>
     </header>
 
@@ -111,7 +32,7 @@
       </div>
     </div>
 
-    <!-- Dashboard -->
+    <!-- Dashboard (hidden by default) -->
     <div id="dashboard" class="hidden">
       <div class="user-info">
         <span id="user-email"></span>
@@ -125,120 +46,13 @@
         <button class="btn" id="add-site-btn">Generate Keys</button>
       </div>
 
-      <div id="sites-list"></div>
+      <div id="sites-list">
+        <!-- Sites will be injected here by JavaScript -->
+      </div>
     </div>
   </div>
 
-  <script>
-    // Initialize Supabase — REPLACE THESE!
-    const supabase = createClient(
-      'https://lxtaitbzpvdzyonxhfmm.supabase.co', 
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4dGFpdGJ6cHZkenlvbnhoZm1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNTA3ODIsImV4cCI6MjA3NDkyNjc4Mn0.gNIq2oJFbKgz7TayICLi6djNB_j2PxAlAZYyE0s5amM' // YOUR anon key
-    );
-
-    // DOM
-    const authSection = document.getElementById('auth-section');
-    const dashboard = document.getElementById('dashboard');
-    const userEmailEl = document.getElementById('user-email');
-    const sitesList = document.getElementById('sites-list');
-
-    // Toggle forms
-    document.getElementById('signup-btn').onclick = () => {
-      document.getElementById('login-form').classList.add('hidden');
-      document.getElementById('signup-form').classList.remove('hidden');
-    };
-    document.getElementById('back-to-login').onclick = () => {
-      document.getElementById('signup-form').classList.add('hidden');
-      document.getElementById('login-form').classList.remove('hidden');
-    };
-
-    // Auth
-    document.getElementById('login-btn').onclick = async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) alert('Login failed: ' + error.message);
-      else checkUser();
-    };
-
-    document.getElementById('do-signup-btn').onclick = async () => {
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) alert('Signup failed: ' + error.message);
-      else checkUser();
-    };
-
-    document.getElementById('logout-btn').onclick = async () => {
-      await supabase.auth.signOut();
-      authSection.classList.remove('hidden');
-      dashboard.classList.add('hidden');
-    };
-
-    // Add site
-    document.getElementById('add-site-btn').onclick = async () => {
-      const domain = document.getElementById('new-domain').value.trim();
-      if (!domain) return alert('Please enter a domain');
-      
-      const siteKey = 'tq_site_' + Math.random().toString(36).substring(2, 15);
-      const secretKey = 'tq_secret_' + Math.random().toString(36).substring(2, 30) + Date.now();
-
-      const { error } = await supabase.from('sites').insert({
-        domain,
-        site_key: siteKey,
-        secret_key: secretKey
-      });
-
-      if (error) alert('Failed: ' + error.message);
-      else {
-        document.getElementById('new-domain').value = '';
-        loadSites();
-      }
-    };
-
-    // Load sites
-    async function loadSites() {
-      const { data, error } = await supabase.from('sites').select('*').order('created_at', { ascending: false });
-      if (error) return console.error(error);
-      
-      if (data.length === 0) {
-        sitesList.innerHTML = '<p>No sites added yet.</p>';
-        return;
-      }
-
-      let html = '<h2>Your Sites</h2>';
-      data.forEach(site => {
-        const scriptTag = '<script src="https://verify.tarmacq.com/widget.js" data-sitekey="' + site.site_key + '"></script>';
-        html += `
-          <div class="card">
-            <h3>${site.domain}</h3>
-            <p><strong>Site Key:</strong></p>
-            <div class="key-box">${site.site_key}</div>
-            <p><strong>Secret Key:</strong> (keep this private!)</p>
-            <div class="key-box">${site.secret_key}</div>
-            <p>✅ Add this to your site's HTML:</p>
-            <pre>${scriptTag}</pre>
-          </div>
-        `;
-      });
-      sitesList.innerHTML = html;
-    }
-
-    // Check auth
-    async function checkUser() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        authSection.classList.add('hidden');
-        dashboard.classList.remove('hidden');
-        userEmailEl.textContent = user.email;
-        loadSites();
-      } else {
-        authSection.classList.remove('hidden');
-        dashboard.classList.add('hidden');
-      }
-    }
-
-    checkUser();
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
 </body>
 </html>
