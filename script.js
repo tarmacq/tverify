@@ -71,7 +71,7 @@ async function loadSites() {
 
   let html = '<h2>Your Sites</h2>';
   data.forEach(site => {
-    const scriptTag = '<script src="https://tarmacq.github.io/tverify/widget.js" data-sitekey="' + site.site_key + '"></script>';
+  const scriptTag = '<script src="https://tarmacq.github.io/tverify/widget.js" data-sitekey="' + site.site_key + '"></script>';
     html += `
       <div class="card">
         <h3>${site.domain}</h3>
