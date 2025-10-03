@@ -16,12 +16,24 @@ document.getElementById('back-to-login').onclick = () => {
 };
 
 // Auth handlers
+// In script.js
 document.getElementById('login-btn').onclick = async () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) alert('Login failed: ' + error.message);
-  else checkUser();
+  const email = document.getElementById('email').value.trim();
+  if (!email) return alert('Enter your email');
+  
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      // Must match your Supabase "Additional Redirect URLs"
+      emailRedirectTo: 'https://tarmacq.github.io/tverify/'
+    }
+  });
+
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    alert('✅ Login link sent! Check your email.');
+  }
 };
 
 document.getElementById('do-signup-btn').onclick = async () => {
