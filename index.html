@@ -1,60 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>tarmacq Verify – Get Your CAPTCHA Keys</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- You will link your CSS here -->
+  <title>Tarmacq Verify – Discord Auth</title>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f8fafc; }
+    .card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; width: 90%; max-width: 520px; }
+    h1 { color: #5865F2; margin-bottom: 1.5rem; }
+    .btn { background: #5865F2; color: white; border: none; padding: 14px 24px; font-size: 16px; font-weight: 600; border-radius: 10px; cursor: pointer; width: 100%; transition: background 0.2s; }
+    .btn:hover { background: #4752c4; }
+    #result { margin-top: 24px; padding: 16px; background: #f0f9ff; border-radius: 10px; font-family: monospace; word-break: break-all; display: none; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>tarmacq Verify</h1>
-      <p class="subtitle">Secure your forms with our privacy-first CAPTCHA</p>
-    </header>
-
-    <!-- Auth Section -->
-    <div id="auth-section" class="card">
-      <div id="login-form">
-        <h2>Sign in to manage your sites</h2>
-        <input type="email" id="email" placeholder="you@example.com" />
-        <input type="password" id="password" placeholder="Password" />
-        <button class="btn" id="login-btn">Sign In</button>
-        <button class="btn btn-outline" id="signup-btn">Create Account</button>
-      </div>
-
-      <div id="signup-form" class="hidden">
-        <h2>Create Account</h2>
-        <input type="email" id="signup-email" placeholder="you@example.com" />
-        <input type="password" id="signup-password" placeholder="Password (min 6 chars)" />
-        <button class="btn" id="do-signup-btn">Create Account</button>
-        <button class="btn btn-outline" id="back-to-login">← Back to Login</button>
-      </div>
+  <div class="card">
+    <h1>🔐 Tarmacq Verify</h1>
+    
+    <div id="login-section">
+      <p>Sign in with Discord to generate your site key</p>
+      <button class="btn" onclick="loginWithDiscord()">Login with Discord</button>
     </div>
 
-    <!-- Dashboard (hidden by default) -->
-    <div id="dashboard" class="hidden">
-      <div class="user-info">
-        <span id="user-email"></span>
-        <button class="btn btn-outline" id="logout-btn">Sign Out</button>
-      </div>
-
-      <div class="card">
-        <h2>Add a New Site</h2>
-        <p>Enter the domain where you'll use tarmacq Verify (e.g. <code>example.com</code>)</p>
-        <input type="text" id="new-domain" placeholder="yourwebsite.com" />
-        <button class="btn" id="add-site-btn">Generate Keys</button>
-      </div>
-
-      <div id="sites-list">
-        <!-- Sites will be injected here by JavaScript -->
-      </div>
+    <div id="key-section" style="display:none;">
+      <p>✅ Logged in! Generate your key:</p>
+      <button class="btn" onclick="generateKey()">Generate Real Key</button>
+      <div id="result"></div>
     </div>
   </div>
 
+  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase.js"></script>
-<script src="script.js"></script>
+  <script>
+    // Initialize Supabase
+    const supabase = window.supabase.createClient(
+      'https://lxtaitbzpvdzyonxhfmm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4dGFpdGJ6cHZkenlvbnhoZm1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg5MzQ1NjQsImV4cCI6MjA0NDUxMDU2NH0.7JvXqV6dK7Y8Z9X0W1Y2Z3X4Y5Z6X7Y8Z9X0W1Y2Z3X4' // Replace with your anon key
+    );
+
+    const loginSection = document.getElementById('login-section');
+    const keySection = document.getElementById('key-section');
+
+    // Check if user is logged in
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        loginSection.style.display = 'none';
+        keySection.style.display = 'block';
+      }
+    }
+
+    // Login with Discord
+    async function loginWithDiscord() {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: window.location.href // Redirect back to this page
+        }
+      });
+      if (error) console.error('Login error:', error);
+    }
+
+    // Generate real key (saved to DB)
+    async function generateKey() {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 'Generating...';
+      resultDiv.style.display = 'block';
+
+      try {
+        const siteKey = 'tq_site_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36).substring(2, 6);
+        const secretKey = 'tq_secret_' + Math.random().toString(36).substring(2, 20) + Date.now().toString(36);
+
+        const { error } = await supabase.from('sites').insert({
+          domain: 'localhost',
+          site_key: siteKey,
+          secret_key: secretKey
+        });
+
+        if (error) throw error;
+
+        resultDiv.innerHTML = 
+          '<strong>✅ Site Key:</strong><br>' +
+          siteKey + '<br><br>' +
+          'Use in HTML:<br>' +
+          '<script src="https://tarmacq.github.io/tverify/widget.js" data-sitekey="' + siteKey + '"></script';
+      } catch (err) {
+        resultDiv.textContent = '❌ Error: ' + err.message;
+        console.error(err);
+      }
+    }
+
+    // Initialize
+    checkAuth();
+  </script>
 </body>
 </html>
