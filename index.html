@@ -50,15 +50,16 @@
     }
 
     // Login with Discord
-    async function loginWithDiscord() {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: window.location.href // Redirect back to this page
-        }
-      });
-      if (error) console.error('Login error:', error);
-    }
+ async function loginWithDiscord() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        // ✅ Must match your GitHub Pages URL exactly
+        redirectTo: 'https://tarmacq.github.io/tverify/'
+      }
+    });
+    if (error) console.error('Login error:', error);
+  }
 
     // Generate real key (saved to DB)
     async function generateKey() {
