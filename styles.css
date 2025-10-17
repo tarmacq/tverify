@@ -1,105 +1,41 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
-  line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    font-family: "Canva Sans", Arial, Helvetica, sans-serif;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
+.wrapper {
+    position: relative;
 }
 
-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
+svg {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
 }
 
-h1 {
-  font-size: 2.25rem;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
+.scrollElement {
+    position: absolute;
+    height: 6000px;
+    width: 100%;
+    top: 0;
+    z-index: 4;
 }
 
-.subtitle {
-  color: #64748b;
-}
+@media (max-width: 490px) {
 
-.card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-}
+    #text,
+    #arrow {
+        transform-origin: 50% 50%;
+        transform: translateY(-120px) scale(0.8);
+    }
 
-.btn {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
-  width: 100%;
-  margin: 0.5rem 0 1rem;
-}
-
-.btn:hover {
-  background: #2563eb;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 1px solid #cbd5e1;
-  color: #475569;
-}
-
-.btn-outline:hover {
-  background: #f1f5f9;
-}
-
-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  margin: 0.5rem 0 1rem;
-}
-
-.key-box {
-  background: #f1f5f9;
-  padding: 1rem;
-  border-radius: 8px;
-  font-family: monospace;
-  word-break: break-all;
-  margin: 0.5rem 0;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.user-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-pre {
-  background: #f8fafc;
-  padding: 1rem;
-  border-radius: 6px;
-  overflow-x: auto;
-  font-family: monospace;
+    #info2 {
+        transform-origin: 50% 50%;
+        transform: translateY(-120px) scale(0.8);
+    }
 }
